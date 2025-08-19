@@ -125,6 +125,48 @@ const ParameterControls = ({ parameters, onParameterChange, onRunSimulation, isR
                 <small className="parameter-description">
                     Lower contacts = deeper stimulation, Higher contacts = shallower
                 </small>
+                
+                {/* Contact visualization */}
+                <div className="contact-visualization" style={{ marginTop: '10px' }}>
+                    <div className="contact-diagram">
+                        {[3, 2, 1, 0].map(contact => (
+                            <div 
+                                key={contact}
+                                className={`contact-indicator ${parameters.contact === contact ? 'active' : ''}`}
+                                style={{
+                                    width: '20px',
+                                    height: '15px',
+                                    margin: '2px auto',
+                                    borderRadius: '3px',
+                                    backgroundColor: parameters.contact === contact ? '#ff4444' : '#888888',
+                                    border: '1px solid #333',
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => handleSliderChange('contact', contact)}
+                                title={`Contact ${contact} - ${contact === 0 ? 'Deepest' : contact === 3 ? 'Shallowest' : 'Mid-depth'}`}
+                            >
+                                <span style={{ 
+                                    fontSize: '10px', 
+                                    color: 'white', 
+                                    fontWeight: 'bold',
+                                    display: 'block',
+                                    textAlign: 'center',
+                                    lineHeight: '13px'
+                                }}>
+                                    {contact}
+                                </span>
+                            </div>
+                        ))}
+                        <div style={{ 
+                            textAlign: 'center', 
+                            fontSize: '10px', 
+                            color: '#666', 
+                            marginTop: '5px' 
+                        }}>
+                            DBS Lead
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="advanced-toggle">

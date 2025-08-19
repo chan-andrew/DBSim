@@ -4,6 +4,7 @@ import ParameterControls from './components/ParameterControls';
 import ExplorationPanel from './components/ExplorationPanel';
 import ResultsDisplay from './components/ResultsDisplay';
 import TutorialMode from './components/TutorialMode';
+import DarkVeil from './components/DarkVeil';
 import { simulateDBSParameters, exploreParameterSpace } from './utils/apiClient';
 import './App.css';
 
@@ -133,6 +134,14 @@ function App() {
 
     return (
         <div className="app-container">
+            <div className="background-animation">
+                <DarkVeil 
+                    speed={0.3}
+                    hueShift={220}
+                    noiseIntensity={0.1}
+                    warpAmount={0.2}
+                />
+            </div>
             <header className="app-header">
                 <div className="header-content">
                     <h1>NeuroTwin</h1>

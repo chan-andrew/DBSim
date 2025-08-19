@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js-dist';
+import { Brain } from 'threejs-brain-animation';
+import ThreeBrainVisualization from './ThreeBrainVisualization';
+import CustomBrainAnimation from './CustomBrainAnimation';
 
 const BrainVisualization = ({ simulationData, isLoading, parameters }) => {
     const plotRef = useRef(null);
     const [visualizationMode, setVisualizationMode] = useState('field');
     const [showElectrode, setShowElectrode] = useState(true);
     const [fieldThreshold, setFieldThreshold] = useState(0.1);
+    const [brainMode, setBrainMode] = useState('plotly'); // 'plotly', 'threejs', 'enhanced3d'
 
     useEffect(() => {
         if (simulationData && plotRef.current) {
@@ -261,17 +265,55 @@ const BrainVisualization = ({ simulationData, isLoading, parameters }) => {
             <div className="visualization-container">
                 <div className="visualization-header">
                     <h3>🧠 Brain Visualization</h3>
+                    <div className="visualization-controls">
+                        <div className="control-group">
+                            <label>Brain Visualization:</label>
+                            <select 
+                                value={brainMode}
+                                onChange={(e) => setBrainMode(e.target.value)}
+                                className="mode-select"
+                            >
+                                <option value="plotly">Scientific Simulation</option>
+                                <option value="threejs">3D Brain Animation</option>
+                                <option value="enhanced3d">Enhanced 3D + Electrodes</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div className="no-data-message">
-                    <h3>No Simulation Data</h3>
-                    <p>Run a simulation to see the 3D brain visualization</p>
-                    <p>The visualization will show:</p>
-                    <ul>
-                        <li>Brain tissue structure</li>
-                        <li>Electric field distribution</li>
-                        <li>DBS electrode placement</li>
-                    </ul>
-                </div>
+                
+                {brainMode === 'plotly' ? (
+                    <div className="no-data-message">
+                        <h3>No Simulation Data</h3>
+                        <p>Run a simulation to see the scientific brain visualization</p>
+                        <p>The visualization will show:</p>
+                        <ul>
+                            <li>Brain tissue structure</li>
+                            <li>Electric field distribution</li>
+                            <li>DBS electrode placement</li>
+                        </ul>
+                        <p><strong>Or select a different Brain Visualization mode above!</strong></p>
+                    </div>
+                ) : brainMode === 'threejs' ? (
+                    <div className="plot-container">
+                        <div style={{ width: '100%', height: '500px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Brain style={{ width: '600px', height: '500px' }} />
+                        </div>
+                    </div>
+                ) : brainMode === 'custom' ? (
+                    <div className="plot-container">
+                        <div style={{ width: '100%', height: '500px' }}>
+                            <CustomBrainAnimation />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="plot-container">
+                        <ThreeBrainVisualization 
+                            simulationData={null}
+                            parameters={parameters || { frequency: 130, amplitude: 2.0, contact: 0, condition: 'healthy' }}
+                            isLoading={false}
+                        />
+                    </div>
+                )}
             </div>
         );
     }
@@ -318,11 +360,44 @@ const BrainVisualization = ({ simulationData, isLoading, parameters }) => {
                         />
                         <span className="threshold-value">{fieldThreshold.toFixed(2)} V/m</span>
                     </div>
+                    
+                    <div className="control-group">
+                        <label>Brain Visualization:</label>
+                        <select 
+                            value={brainMode}
+                            onChange={(e) => setBrainMode(e.target.value)}
+                            className="mode-select"
+                        >
+                            <option value="plotly">Scientific Simulation</option>
+                            <option value="threejs">3D Brain Animation</option>
+                            <option value="custom">Custom Brain Animation</option>
+                            <option value="enhanced3d">Enhanced 3D + Electrodes</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
             <div className="plot-container">
-                <div ref={plotRef} style={{ width: '100%', height: '500px' }} />
+                {brainMode === 'plotly' && (
+                    <div ref={plotRef} style={{ width: '100%', height: '500px' }} />
+                )}
+                {brainMode === 'threejs' && (
+                    <div style={{ width: '100%', height: '500px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Brain style={{ width: '600px', height: '500px' }} />
+                    </div>
+                )}
+                {brainMode === 'custom' && (
+                    <div style={{ width: '100%', height: '500px' }}>
+                        <CustomBrainAnimation />
+                    </div>
+                )}
+                {brainMode === 'enhanced3d' && (
+                    <ThreeBrainVisualization 
+                        simulationData={simulationData}
+                        parameters={parameters}
+                        isLoading={isLoading}
+                    />
+                )}
             </div>
             
             <div className="visualization-info">
